@@ -1,4 +1,15 @@
 name: MessageChangerLite
 main: org.simiancage.bukkit.messagechangerlite.MessageChangerLite
-version: 2.10
+version: 2.11
 author: Don Redhorse
+
+commands:
+   messagechangerlite:
+      description: The main command for this plugin
+      aliases: [mcl]
+      usage: /<command>
+
+permissions:
+    messagechangerlite.reload:
+        default: op
+        description: Can reload this plugin's configuration

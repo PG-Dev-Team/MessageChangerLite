@@ -2,6 +2,9 @@ package org.simiancage.bukkit.messagechangerlite;
 
 import java.io.IOException;
 
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -24,13 +27,10 @@ public class MessageChangerLite extends JavaPlugin {
 		log.enableMsg();
 
 		try {
-			// create a new metrics object
-			Metrics metrics = new Metrics();
-
-			// 'this' in this context is the Plugin object
-			metrics.beginMeasuringPlugin(this);
+		    Metrics metrics = new Metrics(this);
+		    metrics.start();
 		} catch (IOException e) {
-			// Failed to submit the stats :-(
+		    // Failed to submit the stats :-(
 		}
 	}
 
@@ -79,5 +79,30 @@ public class MessageChangerLite extends JavaPlugin {
 		}
 		log.debug("message", message);
 		return message.replace("%pName", pName).replace("%msg", defMsg).replace("%world", world).replaceAll("(&([a-f0-9]))", "\u00A7$2");
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (label.equalsIgnoreCase("messagechangerlite")) {
+			if (args.length == 0) { // needs help
+				if (sender.hasPermission("messagechangerlite.reload")) {
+					sender.sendMessage(ChatColor.GREEN + "Usage: /" + label + " reload - Reloads the configuration of MessageChangerLite");
+				} else {
+					sender.sendMessage(ChatColor.RED + "You do not have permissions for any of the commands in MessageChangerLite");
+				}
+			} else { // attempted command
+				if (args[0].equalsIgnoreCase("reload")) { // he wants a config reload
+					if (sender.hasPermission("messagechangerlite.reload")) {
+						config.setupConfig(configuration, plugin); // hopefully this will reload the config
+						sender.sendMessage(ChatColor.GOLD + "Configuration reloaded");
+					} else { // he's a fraud!
+						sender.sendMessage(ChatColor.RED + "You do not have permission to use this command");
+					}
+				} else { // what command was he trying?
+					sender.sendMessage(ChatColor.RED + "That command was not recognized");
+				}
+			}
+		}
+		return true;
 	}
 }
