@@ -8,9 +8,8 @@ public abstract class Message {
 	/**
 	 * Loads up the configured message
 	 * @param plugin The main plugin
-	 * @return True is successful, false otherwise
 	 */
-	abstract boolean load(MessageChangerLite plugin);
+	abstract void load(MessageChangerLite plugin) throws Exception;
 	
 	/**
 	 * Generates a new file for message configuration

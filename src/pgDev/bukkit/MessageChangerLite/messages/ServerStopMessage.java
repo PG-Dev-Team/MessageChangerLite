@@ -1,7 +1,9 @@
 package pgDev.bukkit.MessageChangerLite.messages;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.LinkedHashMap;
@@ -35,19 +37,39 @@ public class ServerStopMessage extends Message {
 	}
 	
 	@Override
-	boolean load(MessageChangerLite plugin) {
+	void load(MessageChangerLite plugin) throws Exception {
 		bukkitShutdownMsg = plugin.getServer().getShutdownMessage();
 		
-		
-		
-		return false;
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(fileLoc));
+			
+			String line = null;
+			int lineNum = 0;
+			while ((line = br.readLine()) != null) {
+				lineNum++;
+				
+				if (!(line.equals("") || line.startsWith("#"))) {
+					String[] parts = line.split("=", 2);
+					if (parts.length == 2) {
+						permMessages.put(parts[0], parts[1]);
+					} else {
+						MessageChangerLite.logger.log(Level.WARNING, "There was an error found in the Server Stop Message configuration on line: " + lineNum);
+					}
+				}
+			}
+		} finally {
+			if (br != null) {
+				br.close();
+			}
+		}
 	}
 	
 	@Override
 	void generateFile() {
 		BufferedWriter out = null;
 		try {
-			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(messageDir)));
+			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileLoc)));
 			out.write("#\r\n");
 			out.write("# Server-Stop Message Configuration\r\n");
 			out.write("#\r\n");
@@ -56,10 +78,8 @@ public class ServerStopMessage extends Message {
 			out.write("#\r\n");
 			out.write("# Variables:\r\n");
 			out.write("#	%default% -> The default message of the server\r\n");
-			out.write("#	%receiverName% -> The username of the player receiving \r\n");
-			out.write("this message\r\n");
-			out.write("#	%receiverDisplayName% -> The display name of the \r\n");
-			out.write("player receiving this message\r\n");
+			out.write("#	%receiverName% -> The username of the player receiving this message\r\n");
+			out.write("#	%receiverDisplayName% -> The display name of the player receiving this message\r\n");
 			out.write("\r\n");
 			out.write("default=Server is shutting down...\r\n");
 			out.write("\r\n");
