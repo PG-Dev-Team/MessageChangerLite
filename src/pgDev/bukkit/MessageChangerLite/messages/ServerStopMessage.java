@@ -53,7 +53,11 @@ public class ServerStopMessage extends Message {
 				if (!(line.equals("") || line.startsWith("#"))) {
 					String[] parts = line.split("=", 2);
 					if (parts.length == 2) {
-						permMessages.put(parts[0], parts[1]);
+						if (parts[0].equalsIgnoreCase("default")) {
+							defaultMessage = parts[1];
+						} else {
+							permMessages.put(parts[0], parts[1]);
+						}
 					} else {
 						MessageChangerLite.logger.log(Level.WARNING, "There was an error found in the Server Stop Message configuration on line: " + lineNum);
 					}
