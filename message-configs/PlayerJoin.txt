@@ -1,0 +1,28 @@
+#
+# Player-Join Message Configuration
+#
+# Format:
+#	<joinerPem>:
+#	<receiverPerm>=<message>
+#
+# Variables:
+#	%default% -> The default join message for this player
+#	%joinedName% -> The username of the player who joined the server
+#	%joinedDisplayName% -> The display name of the player who joined the server
+#	%receiverName% -> The username of the player receiving this message
+#	%receiverDisplayName% -> The display name of the player receiving this message
+#
+# Note:
+#	Every joinerPerm section needs a default message
+
+default:
+default=%joinedDisplayName% has just joined the best server in the world!
+admin=%joinedName% has joined your server
+
+vip:
+default=VIP %joinedDisplayName% has just joined the best server in the world!
+admin=VIP %joinedName% has joined your server
+
+admin:
+default=The almighty %joinedDisplayName% has joined
+admin=A fellow admin %joinedName% has joined
