@@ -31,7 +31,8 @@ public class ServerStopMessage extends Message {
 	}
 	
 	static String replaceVars(String msg, Player receiver) {
-		return msg.replace("%default%", bukkitShutdownMsg)
+		return msg.replace("%none%", " ")
+				.replace("%default%", bukkitShutdownMsg)
 				.replace("%receiverName%", receiver.getName())
 				.replace("%receiverDisplayName%", receiver.getDisplayName());
 	}

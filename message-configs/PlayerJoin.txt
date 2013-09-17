@@ -6,6 +6,7 @@
 #	<receiverPerm>=<message>
 #
 # Variables:
+#	%none# -> No join message
 #	%default% -> The default join message for this player
 #	%joinedName% -> The username of the player who joined the server
 #	%joinedDisplayName% -> The display name of the player who joined the server

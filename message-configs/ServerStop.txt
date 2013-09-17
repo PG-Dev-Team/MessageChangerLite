@@ -5,6 +5,7 @@
 #	<permission>=<message>
 #
 # Variables:
+#	%none% - > An empty shutdown message
 #	%default% -> The default message of the server
 #	%receiverName% -> The username of the player receiving this message
 #	%receiverDisplayName% -> The display name of the player receiving this message
