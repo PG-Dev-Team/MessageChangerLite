@@ -34,7 +34,8 @@ public class ServerStopMessage extends Message {
 		return msg.replace("%none%", " ")
 				.replace("%default%", bukkitShutdownMsg)
 				.replace("%receiverName%", receiver.getName())
-				.replace("%receiverDisplayName%", receiver.getDisplayName());
+				.replace("%receiverDisplayName%", receiver.getDisplayName())
+				.replace("%receiverWorld%", receiver.getWorld().getName());
 	}
 	
 	@Override

@@ -10,8 +10,10 @@
 #	%default% -> The default join message for this player
 #	%joinedName% -> The username of the player who joined the server
 #	%joinedDisplayName% -> The display name of the player who joined the server
+#	%joinedWorld% -> The name of the world of the player joined into
 #	%receiverName% -> The username of the player receiving this message
 #	%receiverDisplayName% -> The display name of the player receiving this message
+#	%receiverWorld% -> The name of the world the player receiving this message is in
 #
 # Note:
 #	Every joinerPerm section needs a default message

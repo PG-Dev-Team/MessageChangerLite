@@ -9,6 +9,7 @@
 #	%default% -> The default message of the server
 #	%receiverName% -> The username of the player receiving this message
 #	%receiverDisplayName% -> The display name of the player receiving this message
+#	%receiverWorld% -> The name of the world the player receiving this message is in
 
 default=Server is shutting down...
 
