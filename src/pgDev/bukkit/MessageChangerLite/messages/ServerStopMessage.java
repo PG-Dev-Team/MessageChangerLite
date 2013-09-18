@@ -83,9 +83,11 @@ public class ServerStopMessage extends Message {
 			out.write("#	<permission>=<message>\r\n");
 			out.write("#\r\n");
 			out.write("# Variables:\r\n");
+			out.write("#	%none% - > An empty shutdown message\r\n");
 			out.write("#	%default% -> The default message of the server\r\n");
 			out.write("#	%receiverName% -> The username of the player receiving this message\r\n");
 			out.write("#	%receiverDisplayName% -> The display name of the player receiving this message\r\n");
+			out.write("#	%receiverWorld% -> The name of the world the player receiving this message is in\r\n");
 			out.write("\r\n");
 			out.write("default=Server is shutting down...\r\n");
 			out.write("\r\n");
