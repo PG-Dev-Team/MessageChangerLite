@@ -10,6 +10,9 @@ public class MessageChangerLite extends JavaPlugin {
 	// Plugin data directory
 	public static String mainDir = "./plugins/MessageChangerLite";
 	
+	// Message root perm
+	public static String msgRootPerm = "mcl.message.";
+	
 	// Bukkit logger
 	public static Logger logger;
 	

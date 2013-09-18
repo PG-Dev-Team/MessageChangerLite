@@ -13,5 +13,5 @@
 
 default=Server is shutting down...
 
-admin=Your server is shutting down!
 vip=Sorry! Server going down for maintenance.
+admin=Your server is shutting down!

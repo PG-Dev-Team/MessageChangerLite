@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import org.bukkit.entity.Player;
@@ -18,19 +19,18 @@ public class ServerStopMessage extends Message {
 	
 	static String bukkitShutdownMsg;
 
-	static String defaultMessage;
-	static LinkedHashMap<String, String> permMessages;
+	static Map<String, String> permMessages;
 	
 	public static String getMessage(Player receiver) {
+		String msg = permMessages.get("default");
 		for (String perm : permMessages.keySet()) {
-			if (receiver.hasPermission("perm")) {
-				return replaceVars(permMessages.get(perm), receiver);
+			if (!perm.equals("default")) {
+				if (receiver.hasPermission(MessageChangerLite.msgRootPerm + perm)) {
+					msg = permMessages.get(perm);
+				}
 			}
 		}
-		return defaultMessage;
-	}
-	
-	static String replaceVars(String msg, Player receiver) {
+		
 		return msg.replace("%none%", " ")
 				.replace("%default%", bukkitShutdownMsg)
 				.replace("%receiverName%", receiver.getName())
@@ -42,23 +42,21 @@ public class ServerStopMessage extends Message {
 	void load(MessageChangerLite plugin) throws Exception {
 		bukkitShutdownMsg = plugin.getServer().getShutdownMessage();
 		
+		permMessages = new LinkedHashMap<String, String>();
+		
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(fileLoc));
 			
 			String line = null;
 			int lineNum = 0;
-			while ((line = br.readLine()) != null) {
+			while ((line = br.readLine().trim()) != null) {
 				lineNum++;
 				
 				if (!(line.equals("") || line.startsWith("#"))) {
 					String[] parts = line.split("=", 2);
 					if (parts.length == 2) {
-						if (parts[0].equalsIgnoreCase("default")) {
-							defaultMessage = parts[1];
-						} else {
-							permMessages.put(parts[0], parts[1]);
-						}
+						permMessages.put(parts[0].toLowerCase(), parts[1]);
 					} else {
 						MessageChangerLite.logger.log(Level.WARNING, "There was an error found in the Server Stop Message configuration on line: " + lineNum);
 					}
@@ -68,6 +66,12 @@ public class ServerStopMessage extends Message {
 			if (br != null) {
 				br.close();
 			}
+		}
+		
+		// Check the data
+		if (!permMessages.containsKey("default")) {
+			MessageChangerLite.logger.log(Level.SEVERE, "No default message was found in the Server Stop Message configuration");
+			throw new UnsupportedOperationException();
 		}
 	}
 	

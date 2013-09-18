@@ -1,20 +1,99 @@
 package pgDev.bukkit.MessageChangerLite.messages;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
+
+import org.bukkit.entity.Player;
 
 import pgDev.bukkit.MessageChangerLite.MessageChangerLite;
 
 public class PlayerJoinMessage extends Message {
 	public static String fileLoc = messageDir + "/PLAYER_JOIN.cfg";
 
+	static Map<String, Map<String, String>> permMessages;
+	
+	public static String getMessage(Player joiner, Player receiver, String defaultMessage) {
+		Map<String, String> receiverMessages = permMessages.get("default");
+		for (String perm : permMessages.keySet()) {
+			if (!perm.equals("default")) {
+				if (joiner.hasPermission(MessageChangerLite.msgRootPerm + perm)) {
+					receiverMessages = permMessages.get(perm);
+				}
+			}
+		}
+		
+		String msg = receiverMessages.get("default");
+		for (String perm : receiverMessages.keySet()) {
+			if (!perm.equals("default")) {
+				if (receiver.hasPermission(MessageChangerLite.msgRootPerm + perm)) {
+					msg = receiverMessages.get(perm);
+				}
+			}
+		}
+		
+		return msg.replace("%none%", "")
+				.replace("%default%", defaultMessage)
+				.replace("%joinedName%", joiner.getName())
+				.replace("%joinedDisplayName%", joiner.getDisplayName())
+				.replace("%joinedWorld%", joiner.getWorld().getName())
+				.replace("%receiverName%", receiver.getName())
+				.replace("%receiverDisplayName%", receiver.getDisplayName())
+				.replace("%receiverWorld%", receiver.getWorld().getName());
+	}
+	
 	@Override
 	void load(MessageChangerLite plugin) throws Exception {
-		// TODO Auto-generated method stub
+		permMessages = new LinkedHashMap<String, Map<String, String>>();
 		
+		Map<String, String> curMap = new LinkedHashMap<String, String>();
+		permMessages.put("default", curMap);
+		
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(fileLoc));
+			
+			String line = null;
+			int lineNum = 0;
+			while ((line = br.readLine().trim()) != null) {
+				lineNum++;
+				
+				if (!(line.equals("") || line.startsWith("#"))) {
+					if (line.endsWith(":")) {
+						curMap = permMessages.get(line.substring(0, line.length() - 1));
+						if (curMap == null) {
+							curMap = new LinkedHashMap<String, String>();
+							permMessages.put(line.substring(0, line.length() - 1), curMap);
+						}
+					} else {
+						String[] parts = line.split("=", 2);
+						if (parts.length == 2) {
+							curMap.put(parts[0].toLowerCase(), parts[1]);
+						} else {
+							MessageChangerLite.logger.log(Level.WARNING, "There was an error found in the Player Join Message configuration on line: " + lineNum);
+						}
+					}
+				}
+			}
+		} finally {
+			if (br != null) {
+				br.close();
+			}
+		}
+		
+		// Check the data
+		for (Map.Entry<String, Map<String, String>> joinerData : permMessages.entrySet()) {
+			if (!joinerData.getValue().containsKey("default")) {
+				MessageChangerLite.logger.log(Level.SEVERE, "No default message was found in the Player Join Message configuration for the \"" + joinerData.getKey() + "\" joiner permission");
+				throw new UnsupportedOperationException();
+			}
+		}
 	}
 
 	@Override
